@@ -105,20 +105,22 @@ bot.command("show_product", async (ctx) => {
             let message = `💰 Saldo Anda: ${formatUang(ctx.session.user.saldo)} 💳\n\n📦 Daftar Kuota Tersedia:\n\n`;
             const uniqueProducts = new Set();
             
-            const filteredProducts = response.data.data.filter(product => {
-                
-                const key = `${product.nama_paket}-${product.quota_allocated}`;
-                if (!uniqueProducts.has(key)) {
-                    uniqueProducts.add(key);
-                    return true;
-                }
-                return false;
-            });
+const filteredProducts = response.data.data.filter(product => {
+    // Hanya produk dengan sisa_slot lebih dari 0
+    if (product.sisa_slot <= 0) return false; 
+
+    // Unik berdasarkan nama_paket dan quota_allocated
+    const key = `${product.nama_paket}-${product.quota_allocated}`;
+    if (!uniqueProducts.has(key)) {
+        uniqueProducts.add(key);
+        return true;
+    }
+    
+    return false;
+});
             
             // Looping hanya pada produk yang unik
-            filteredProducts
-                .filter(product => product.sisa_slot > 0)
-                .forEach((product, index) => {
+            filteredProducts.forEach((product, index) => {
                 message += `🔹 ${index + 1}. *${product.nama_paket}*\n` +
                     `💰 Harga: ${formatUang(product.harga)} 💳\n` +
                     `📦 Size Quota: ${product.quota_allocated} 💳\n` +
