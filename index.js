@@ -152,9 +152,9 @@ bot.command("buy", async (ctx) => {
 
     try {
         const response = await axios.post(`${API_URL}/buy.php`, {
-            id: id_produk,
+            "id": id_produk,
             "customer-no": customer_no,
-            user_id: ctx.session.user.id
+            "user_id": ctx.session.user.id
         });
 
         if (response.data.status === "success") {
