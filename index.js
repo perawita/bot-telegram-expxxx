@@ -155,12 +155,14 @@ bot.command("buy", async (ctx) => {
     const id_produk = args[0];
     const customer_no = args[1];
 
-    try {
-        const response = await axios.post(`${API_URL}/buy.php`, {
-            "id": id_produk,
+    const payloadBuy = qs.stringify({
+                "id": id_produk,
             "customer-no": customer_no,
             "user_id": ctx.session.user.id
-        });
+            });
+    
+    try {
+        const response = await axios.post(`${API_URL}/buy.php`, payloadBuy);
 
         if (response.data.status === "success") {
             ctx.reply(`✅ Pembelian berhasil!\n💰 Saldo terbaru: ${formatUang(response.data.saldo_terbaru)}`);
