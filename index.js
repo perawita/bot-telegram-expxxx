@@ -106,6 +106,7 @@ bot.command("show_product", async (ctx) => {
             const uniqueProducts = new Set();
             
             const filteredProducts = response.data.data.filter(product => {
+                console.log('Data '+ product);
                 const key = `${product.nama_paket}-${product.quota_allocated}`;
                 if (!uniqueProducts.has(key)) {
                     uniqueProducts.add(key);
