@@ -13,6 +13,20 @@ function escapeMarkdownV2(text) {
     return text.replace(/[_*[\]()~`>#\+=|{}.!-]/g, "\\$&");
 }
 
+function formatUang(value) {
+    if (value >= 1_000_000_000_000) {
+        return (value / 1_000_000_000_000).toFixed(1).replace(/\.0$/, '') + 't'; // Triliun
+    } else if (value >= 1_000_000_000) {
+        return (value / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'm'; // Miliar
+    } else if (value >= 1_000_000) {
+        return (value / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'j'; // Juta
+    } else if (value >= 1_000) {
+        return (value / 1_000).toFixed(1).replace(/\.0$/, '') + 'k'; // Ribu
+    } else {
+        return value.toString();
+    }
+}
+
 
 // Middleware session dengan TTL (time-to-live) lebih lama
 const localSession = new LocalSession({
@@ -73,7 +87,7 @@ bot.command("show_profile", (ctx) => {
 // Perintah /show_balance
 bot.command("show_balance", (ctx) => {
     if (ctx.session.user) {
-        ctx.reply(escapeMarkdownV2(`💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳`), { parse_mode: "MarkdownV2" });
+        ctx.reply(escapeMarkdownV2(`💰 *Saldo Anda:* ${formatUang(ctx.session.user.saldo)} 💳`), { parse_mode: "MarkdownV2" });
     } else {
         ctx.reply(escapeMarkdownV2("⚠️ Anda belum login! Gunakan `/login` untuk masuk."));
     }
@@ -88,7 +102,7 @@ bot.command("show_product", async (ctx) => {
     try {
         const response = await axios.post(`${API_URL}/view.php`);
         if (response.data.status === "true" && response.data.data.length > 0) {
-            let message = `💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳\n\n📦 Daftar Kuota Tersedia:\n\n`;
+            let message = `💰 Saldo Anda: ${formatUang(ctx.session.user.saldo)} 💳\n\n📦 Daftar Kuota Tersedia:\n\n`;
             const uniqueProducts = new Set();
             
             const filteredProducts = response.data.data.filter(product => {
@@ -103,7 +117,7 @@ bot.command("show_product", async (ctx) => {
             // Looping hanya pada produk yang unik
             filteredProducts.forEach((product, index) => {
                 message += `🔹 ${index + 1}. *${product.nama_paket}*\n` +
-                    `💰 Harga: ${product.harga} 💳\n` +
+                    `💰 Harga: ${formatUang(product.harga)} 💳\n` +
                     `📦 Size Quota: ${product.quota_allocated} 💳\n` +
                     `🆔 ID Product: ${product.id}\n` +
                     `➖➖➖➖➖➖➖➖➖➖\n`;
@@ -144,7 +158,7 @@ bot.command("buy", async (ctx) => {
         });
 
         if (response.data.status === "success") {
-            ctx.reply(`✅ Pembelian berhasil!\n💰 Saldo terbaru: ${response.data.saldo_terbaru}`);
+            ctx.reply(`✅ Pembelian berhasil!\n💰 Saldo terbaru: ${formatUang(response.data.saldo_terbaru)}`);
         } else {
             ctx.reply(`❌ Gagal membeli produk: ${response.data.message}`);
         }
