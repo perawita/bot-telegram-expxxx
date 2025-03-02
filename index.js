@@ -30,8 +30,7 @@ const escapeMarkdown = (text) => {
 };
 
 // Convert ke format uang yang mudah di baca
-function formatUang(uang) {
-    const value = parseInt(uang);
+function formatUang(value) {
     if (value >= 1_000_000_000_000) {
         return (value / 1_000_000_000_000).toFixed(1).replace(/\.0$/, '') + 't'; // Triliun
     } else if (value >= 1_000_000_000) {
@@ -119,7 +118,7 @@ bot.command("show_product", async (ctx) => {
                 if (!uniqueProducts.has(key)) {
                     uniqueProducts.add(key);
             
-                    message += escapeMarkdown(`🔹 *${(index + 1).toString()}\\.${(product.nama_paket)}*\n`);
+                    message += escapeMarkdown(`🔹 ${(index + 1).toString()}\\.${(product.nama_paket)}*\n`);
                     message += escapeMarkdown(`💰 Harga: ${formatUang(product.harga).toString().replace(/\./g, "\\.")} 💳\n`);
                     message += escapeMarkdown(`📦 Size Quota: ${product.quota_allocated} 💳\n`);
                     message += escapeMarkdown(`🆔 ID Product: ${product.id.toString().replace(/\./g, "\\.")}\n`);
