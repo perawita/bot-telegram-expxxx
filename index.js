@@ -10,7 +10,7 @@ const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 const API_URL = process.env.API_BACKEND || "http://localhost/website/expired/api";
 
 function escapeMarkdownV2(text) {
-    return text.replace(/[_*[\]()~`>#\+=|{}.!-]/g, "\\$&");
+    return text.replace(/[_*[\]()~`>#\+=|{}.!-]/g, "\$&");
 }
 
 function formatUang(value) {
@@ -73,10 +73,10 @@ bot.command("show_profile", (ctx) => {
     if (ctx.session.user) {
         const user = ctx.session.user;
         ctx.reply(escapeMarkdownV2(
-            `👤 *Profil Anda:*\n` +
-            `🆔 *ID:* ${user.id}\n` +
-            `📧 *Email:* ${user.email}\n` +
-            `👤 *Nama:* ${user.name}`),
+            `👤 Profil Anda:*\n` +
+            `🆔 ID: ${user.id}\n` +
+            `📧 Email: ${user.email}\n` +
+            `👤 Nama: ${user.name}`),
             { parse_mode: "MarkdownV2" }
         );
     } else {
@@ -126,8 +126,8 @@ bot.command("show_product", async (ctx) => {
 
             message += "\n🛒 *Cara Membeli Produk:*\n" +
                 "1️⃣ Ketik perintah berikut:\n" +
-                "`/buy <id_produk> <nomor_pelanggan>`\n\n" +
-                "📌 Contoh: `/buy 123456 081234567890`\n" +
+                "/buy <id_produk> <nomor_pelanggan>\n\n" +
+                "📌 Contoh: /buy 123456 081234567890\n" +
                 "⚠️ Pastikan saldo mencukupi sebelum melakukan pembelian.";
 
             ctx.reply(escapeMarkdownV2(message), { parse_mode: "MarkdownV2" });
