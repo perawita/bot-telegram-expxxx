@@ -91,20 +91,24 @@ bot.command("show_product", async (ctx) => {
             let message = `💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳\n\n📦 Daftar Kuota Tersedia:\n\n`;
             const uniqueProducts = new Set();
             
-            response.data.data.forEach((product, index) => {
+            const filteredProducts = response.data.data.filter(product => {
                 const key = `${product.nama_paket}-${product.quota_allocated}`;
-            
                 if (!uniqueProducts.has(key)) {
                     uniqueProducts.add(key);
-                    response.data.data.forEach((product, index) => {
-                        message += `🔹 ${index + 1}. *${product.nama_paket}*\n` +
-                            `💰 Harga: ${product.harga} 💳\n` +
-                            `📦 Size Quota: ${product.quota_allocated} 💳\n` +
-                            `🆔 ID Product: ${product.id}\n` +
-                            `➖➖➖➖➖➖➖➖➖➖\n`;
-                    });
+                    return true;
                 }
+                return false;
             });
+            
+            // Looping hanya pada produk yang unik
+            filteredProducts.forEach((product, index) => {
+                message += `🔹 ${index + 1}. *${product.nama_paket}*\n` +
+                    `💰 Harga: ${product.harga} 💳\n` +
+                    `📦 Size Quota: ${product.quota_allocated} 💳\n` +
+                    `🆔 ID Product: ${product.id}\n` +
+                    `➖➖➖➖➖➖➖➖➖➖\n`;
+            });
+            
 
             message += "\n🛒 *Cara Membeli Produk:*\n" +
                 "1️⃣ Ketik perintah berikut:\n" +
