@@ -30,15 +30,16 @@ const escapeMarkdown = (text) => {
 };
 
 // Convert ke format uang yang mudah di baca
-function formatUang(value) {
+function formatUang(uang) {
+    const value = parseInt(uang);
     if (value >= 1_000_000_000_000) {
-        return (value / 1_000_000_000_000).toFixed(1).replace(/\.0$/, '') + 't';
+        return (value / 1_000_000_000_000).toFixed(1).replace(/\.0$/, '') + 't'; // Triliun
     } else if (value >= 1_000_000_000) {
-        return (value / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'm';
+        return (value / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'm'; // Miliar
     } else if (value >= 1_000_000) {
-        return (value / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'j';
+        return (value / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'j'; // Juta
     } else if (value >= 1_000) {
-        return (value / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+        return (value / 1_000).toFixed(1).replace(/\.0$/, '') + 'k'; // Ribu
     } else {
         return value.toString();
     }
