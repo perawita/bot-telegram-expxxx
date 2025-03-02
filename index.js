@@ -66,7 +66,7 @@ bot.command("show_profile", (ctx) => {
             { parse_mode: "MarkdownV2" }
         );
     } else {
-        ctx.reply(escapeMarkdownV2(escapeMarkdownV2("⚠️ Anda belum login! Gunakan `/login` untuk masuk.")));
+        ctx.reply(escapeMarkdownV2("⚠️ Anda belum login! Gunakan `/login` untuk masuk."));
     }
 });
 
