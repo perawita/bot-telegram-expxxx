@@ -107,7 +107,7 @@ bot.command("show_product", async (ctx) => {
             
             const filteredProducts = response.data.data.filter(product => {
                 
-                const key = `${product.nama_paket}-${product.quota_allocated}-${product.sisa_slot}`;
+                const key = `${product.nama_paket}-${product.quota_allocated}`;
                 if (!uniqueProducts.has(key)) {
                     uniqueProducts.add(key);
                     return true;
@@ -116,7 +116,9 @@ bot.command("show_product", async (ctx) => {
             });
             
             // Looping hanya pada produk yang unik
-            filteredProducts.forEach((product, index) => {
+            filteredProducts
+                .filter(product => product.sisa_slot > 0)
+                .forEach((product, index) => {
                 message += `🔹 ${index + 1}. *${product.nama_paket}*\n` +
                     `💰 Harga: ${formatUang(product.harga)} 💳\n` +
                     `📦 Size Quota: ${product.quota_allocated} 💳\n` +
