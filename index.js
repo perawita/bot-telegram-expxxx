@@ -89,14 +89,22 @@ bot.command("show_product", async (ctx) => {
         const response = await axios.post(`${API_URL}/view.php`);
         if (response.data.status === "true" && response.data.data.length > 0) {
             let message = `💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳\n\n📦 Daftar Kuota Tersedia:\n\n`;
-
+            const uniqueProducts = new Set();
+            
             response.data.data.forEach((product, index) => {
-                message += `🔹 ${index + 1}. *${product.nama_paket}*\n` +
-                    `💰 Harga: ${product.harga} 💳\n` +
-                    `📦 Size Quota: ${product.quota_allocated} 💳\n` +
-                    `🆔 ID Product: ${product.id}\n` +
-                    `➖➖➖➖➖➖➖➖➖➖\n`;
+                const key = `${product.nama_paket}-${product.quota_allocated}`;
+            
+                if (!uniqueProducts.has(key)) {
+                    uniqueProducts.add(key);
+            
+                    message += `🔹 ${(index + 1).toString()}\\.${product.nama_paket}\n`;
+                    message += `💰 Harga: ${product.harga.toString().replace(/\./g, "\\.")} 💳\n`;
+                    message += `📦 Size Quota: ${product.quota_allocated} 💳\n`;
+                    message += `🆔 ID Product: ${product.id.toString().replace(/\./g, "\\.")}\n`;
+                    message += `➖➖➖➖➖➖➖➖➖➖\n`;
+                }
             });
+            
 
             message += "\n🛒 *Cara Membeli Produk:*\n" +
                 "1️⃣ Ketik perintah berikut:\n" +
