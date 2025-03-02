@@ -10,7 +10,7 @@ const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 const API_URL = process.env.API_BACKEND || "http://localhost/website/expired/api";
 
 function escapeMarkdownV2(text) {
-    return text.replace(/[_*[\]()~`>#+=|{}-]/g, "\\$&");
+    return text.replace(/[_*[\]()~`>#\+=|{}.!-]/g, "\\$&");
 }
 
 function formatUang(value) {
