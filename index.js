@@ -92,11 +92,11 @@ bot.command("show_product", async (ctx) => {
                 if (!uniqueProducts.has(key)) {
                     uniqueProducts.add(key);
             
-                    message += `🔹 *${escapeMarkdown((index + 1).toString())}\\.${escapeMarkdown(product.nama_paket)}*\n`;
-                    message += `💰 Harga: ${escapeMarkdown(product.harga.toString().replace(/\./g, "\\."))} 💳\n`;
-                    message += `📦 Size Quota: ${escapeMarkdown(product.quota_allocated)} 💳\n`;
-                    message += `🆔 ID Product: ${escapeMarkdown(product.id.toString().replace(/\./g, "\\."))}\n`;
-                    message += `➖➖➖➖➖➖➖➖➖➖\n`;
+                    message += escapeMarkdown(`🔹 *${(index + 1).toString()}\\.${(product.nama_paket)}*\n`);
+                    message += escapeMarkdown(`💰 Harga: ${product.harga.toString().replace(/\./g, "\\.")} 💳\n`);
+                    message += escapeMarkdown(`📦 Size Quota: ${product.quota_allocated} 💳\n`);
+                    message += escapeMarkdown(`🆔 ID Product: ${product.id.toString().replace(/\./g, "\\.")}\n`);
+                    message += escapeMarkdown(`➖➖➖➖➖➖➖➖➖➖\n`);
                 }
             });
             
