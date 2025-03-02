@@ -90,7 +90,6 @@ bot.command("show_product", async (ctx) => {
         if (response.data.status === "true" && response.data.data.length > 0) {
             let message = `💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳\n\n📦 Daftar Kuota Tersedia:\n\n`;
             const uniqueProducts = new Set();
-            let message = "";
             
             response.data.data.forEach((product, index) => {
                 const key = `${product.nama_paket}-${product.quota_allocated}`;
