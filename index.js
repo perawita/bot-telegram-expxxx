@@ -84,13 +84,22 @@ bot.command("show_product", async (ctx) => {
         if (response.data.status === "true" && response.data.data.length > 0) {
             let message = escapeMarkdown(`💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳\n`);
             message += escapeMarkdown("📦 Daftar Kuota Tersedia:\n\n");
+            const uniqueProducts = new Set();
+            
             response.data.data.forEach((product, index) => {
-                message += `🔹 *${escapeMarkdown((index + 1).toString())}\\.${escapeMarkdown(product.nama_paket)}*\n`;
-                message += `💰 Harga: ${escapeMarkdown(product.harga.toString().replace(/\./g, "\\."))} 💳\n`;
-                message += `📦 Size Quota: ${escapeMarkdown(product.quota_allocated)} 💳\n`;
-                message += `🆔 ID Product: ${escapeMarkdown(product.id.toString().replace(/\./g, "\\."))}\n`;
-                message += `➖➖➖➖➖➖➖➖➖➖\n`;
+                const key = `${product.nama_paket}-${product.quota_allocated}`;
+            
+                if (!uniqueProducts.has(key)) {
+                    uniqueProducts.add(key);
+            
+                    message += `🔹 *${escapeMarkdown((index + 1).toString())}\\.${escapeMarkdown(product.nama_paket)}*\n`;
+                    message += `💰 Harga: ${escapeMarkdown(product.harga.toString().replace(/\./g, "\\."))} 💳\n`;
+                    message += `📦 Size Quota: ${escapeMarkdown(product.quota_allocated)} 💳\n`;
+                    message += `🆔 ID Product: ${escapeMarkdown(product.id.toString().replace(/\./g, "\\."))}\n`;
+                    message += `➖➖➖➖➖➖➖➖➖➖\n`;
+                }
             });
+            
 
             // Tambahkan instruksi pembelian
             message += escapeMarkdown(
