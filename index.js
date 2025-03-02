@@ -9,6 +9,11 @@ const app = express();
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 const API_URL = process.env.API_BACKEND || "http://localhost/website/expired/api";
 
+function escapeMarkdownV2(text) {
+    return text.replace(/[_*[\]()~`>#\+=|{}.!-]/g, "\\$&");
+}
+
+
 // Middleware session dengan TTL (time-to-live) lebih lama
 const localSession = new LocalSession({
     database: "session.json",
@@ -32,20 +37,20 @@ bot.use((ctx, next) => {
 
 // Perintah /start
 bot.start((ctx) => {
-    ctx.reply(
+    ctx.reply(escapeMarkdownV2(
         `Halo, ${ctx.from.first_name}! Selamat datang di EXPIRED.\n\n` +
         "📌 Dokumentasi Perintah:\n" +
         "🎁 /login - Untuk login akun panel\n" +
         "🎁 /show_profile - Informasi akun panel\n" +
         "🎁 /show_balance - Informasi saldo akun panel\n" +
-        "🎁 /show_product - List kuota",
+        "🎁 /show_product - List kuota"),
         { parse_mode: "MarkdownV2" }
     );
 });
 
 // Perintah /login
 bot.command("login", (ctx) => {
-    ctx.reply("Silakan kirim email Anda untuk login.");
+    ctx.reply(escapeMarkdownV2("Silakan kirim email Anda untuk login."));
     ctx.session.step = "email";
 });
 
@@ -53,31 +58,31 @@ bot.command("login", (ctx) => {
 bot.command("show_profile", (ctx) => {
     if (ctx.session.user) {
         const user = ctx.session.user;
-        ctx.reply(
+        ctx.reply(escapeMarkdownV2(
             `👤 *Profil Anda:*\n` +
             `🆔 *ID:* ${user.id}\n` +
             `📧 *Email:* ${user.email}\n` +
-            `👤 *Nama:* ${user.name}`,
+            `👤 *Nama:* ${user.name}`),
             { parse_mode: "MarkdownV2" }
         );
     } else {
-        ctx.reply("⚠️ Anda belum login! Gunakan `/login` untuk masuk.");
+        ctx.reply(escapeMarkdownV2(escapeMarkdownV2("⚠️ Anda belum login! Gunakan `/login` untuk masuk.")));
     }
 });
 
 // Perintah /show_balance
 bot.command("show_balance", (ctx) => {
     if (ctx.session.user) {
-        ctx.reply(`💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳`, { parse_mode: "MarkdownV2" });
+        ctx.reply(escapeMarkdownV2(`💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳`), { parse_mode: "MarkdownV2" });
     } else {
-        ctx.reply("⚠️ Anda belum login! Gunakan `/login` untuk masuk.");
+        ctx.reply(escapeMarkdownV2("⚠️ Anda belum login! Gunakan `/login` untuk masuk."));
     }
 });
 
 // Perintah /show_product
 bot.command("show_product", async (ctx) => {
     if (!ctx.session.user) {
-        return ctx.reply("⚠️ Anda belum login! Gunakan `/login` untuk masuk.");
+        return ctx.reply(escapeMarkdownV2("⚠️ Anda belum login! Gunakan `/login` untuk masuk."));
     }
 
     try {
@@ -99,7 +104,7 @@ bot.command("show_product", async (ctx) => {
                 "📌 Contoh: `/buy 123456 081234567890`\n" +
                 "⚠️ Pastikan saldo mencukupi sebelum melakukan pembelian.";
 
-            ctx.reply(message, { parse_mode: "MarkdownV2" });
+            ctx.reply(escapeMarkdownV2(message), { parse_mode: "MarkdownV2" });
         } else {
             ctx.reply("⚠️ Tidak ada kuota tersedia saat ini.");
         }
