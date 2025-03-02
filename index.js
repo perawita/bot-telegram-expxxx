@@ -18,11 +18,35 @@ bot.use((ctx, next) => {
 
 const API_URL = process.env.API_BACKEND || "http://localhost/website/expired/api";
 
+/**
+ * _____________________
+ * Fungsi Utility
+ * ____________________
+ */
 
 // Escape karakter spesial di MarkdownV2
 const escapeMarkdown = (text) => {
     return text.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
 };
+
+// Convert ke format uang yang mudah di baca
+function formatUang(value) {
+    if (value >= 1_000_000_000) {
+        return (value / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'm';
+    } else if (value >= 1_000_000) {
+        return (value / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'j';
+    } else if (value >= 1_000) {
+        return (value / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+    } else {
+        return value.toString();
+    }
+}
+
+/**
+ * _____________________
+ * End fungsi Utility
+ * ____________________
+ */
 
 // Perintah /start
 bot.start((ctx) => {
@@ -65,7 +89,7 @@ bot.command("show_profile", (ctx) => {
 // Perintah /show_balance
 bot.command("show_balance", (ctx) => {
     if (ctx.session.user) {
-        ctx.reply(`💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳`, { parse_mode: "MarkdownV2" });
+        ctx.reply(`💰 *Saldo Anda:* ${formatUang(ctx.session.user.saldo)} 💳`, { parse_mode: "MarkdownV2" });
     } else {
         ctx.reply("⚠️ Anda belum login! Gunakan `/login` untuk masuk.");
     }
@@ -82,7 +106,7 @@ bot.command("show_product", async (ctx) => {
     try {
         const response = await axios.post(`${API_URL}/view.php`);
         if (response.data.status === "true" && response.data.data.length > 0) {
-            let message = escapeMarkdown(`💰 *Saldo Anda:* ${ctx.session.user.saldo} 💳\n`);
+            let message = escapeMarkdown(`💰 *Saldo Anda:* ${formatUang(ctx.session.user.saldo)} 💳\n`);
             message += escapeMarkdown("📦 Daftar Kuota Tersedia:\n\n");
             const uniqueProducts = new Set();
             
@@ -93,7 +117,7 @@ bot.command("show_product", async (ctx) => {
                     uniqueProducts.add(key);
             
                     message += escapeMarkdown(`🔹 *${(index + 1).toString()}\\.${(product.nama_paket)}*\n`);
-                    message += escapeMarkdown(`💰 Harga: ${product.harga.toString().replace(/\./g, "\\.")} 💳\n`);
+                    message += escapeMarkdown(`💰 Harga: ${formatUang(product.harga).toString().replace(/\./g, "\\.")} 💳\n`);
                     message += escapeMarkdown(`📦 Size Quota: ${product.quota_allocated} 💳\n`);
                     message += escapeMarkdown(`🆔 ID Product: ${product.id.toString().replace(/\./g, "\\.")}\n`);
                     message += escapeMarkdown(`➖➖➖➖➖➖➖➖➖➖\n`);
@@ -138,7 +162,7 @@ bot.command("buy", async (ctx) => {
         });
 
         if (response.data.status === "success") {
-            ctx.reply(escapeMarkdown(`✅ Pembelian berhasil!\n💰 Saldo terbaru: ${response.data.saldo_terbaru}`), { parse_mode: "MarkdownV2" });
+            ctx.reply(escapeMarkdown(`✅ Pembelian berhasil!\n💰 Saldo terbaru: ${formatUang(response.data.saldo_terbaru)}`), { parse_mode: "MarkdownV2" });
         } else {
             ctx.reply(escapeMarkdown(`❌ Gagal membeli produk: ${response.data.message}`), { parse_mode: "MarkdownV2" });
         }
